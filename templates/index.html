@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DRKIST - TECHTREK 2K25</title>
+    <link rel="stylesheet" href="static/style.css">
+    <link rel="icon" type="image/x-icon" href="static/images/drk.png">
+</head>
+<body>
+    <img src="static/images/d.png" alt="Logo" class="logo" />
+    
+    <div class="container">
+        <h2>TECHTREK 2K25</h2>
+        <h3>Quiz Competition</h3>
+        <h5>Stage 1</h5>
+    
+    </div>
+    
+    <div class="sam">
+        <p class="copyright">&copy; 2004 By DRKIST All rights reserved.</p>
+    </div>
+    <button class="quiz-button" onclick="openQuiz()">Take the Quiz</button>
+    <script>
+        function openQuiz() {
+            window.open("https://forms.gle/5Hta7ESDDmF3c8MA7");
+        }</script>
+                
+                <button class="quiz-butto" onclick="openFeedback()">Feedback</button>
+        <script>
+       
+        function openFeedback() {
+            window.open("https://forms.gle/iD8DAoUHBcUfbnU17");
+        }
+    </script>
+     <div id="chatbox"></div>
+     <input type="text" id="input-box" placeholder="Ask me anything...">
+     
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+     
+     <script>
+         const socket = io('http://localhost:5000'); // Use io() instead of io.connect() for socket.io v4+
+         
+         // Check if the socket connection is successful
+         socket.on('connect', function() {
+             console.log('Connected to server!');
+         });
+ 
+         // Send user message to server when the 'Enter' key is pressed
+         document.getElementById('input-box').addEventListener('keypress', function(e) {
+             if (e.key === 'Enter' && e.target.value.trim() !== '') {
+                 const message = e.target.value;
+                 e.target.value = ''; // clear input box
+                 document.getElementById('chatbox').innerHTML += `<div>User: ${message}</div>`;  // Display user message
+                 socket.emit('message', message); // Emit message to server
+             }
+         });
+ 
+         // Display bot response in the chatbox
+         socket.on('response', function(data) {
+             document.getElementById('chatbox').innerHTML += `<div>Bot: ${data}</div>`;
+             const chatbox = document.getElementById('chatbox');
+             chatbox.scrollTop = chatbox.scrollHeight; // Scroll to the bottom of the chatbox
+         });
+     </script>
+</body>
+</html>
