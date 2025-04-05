@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DRKIST - TECHTREK 2K25</title>
-
     <link rel="stylesheet" href="../static/style.css">
-
     <link rel="icon" type="image/x-icon" href="../static/images/drk.png">
 </head>
 <body>
@@ -16,57 +14,131 @@
         <h2>TECHTREK 2K25</h2>
         <h3>Quiz Competition</h3>
         <h5>Stage 1</h5>
-    
     </div>
     
     <div class="sam">
         <p class="copyright">&copy; 2004 By DRKIST All rights reserved.</p>
     </div>
     <button class="quiz-button" onclick="openQuiz()">Take the Quiz</button>
-    <script>
-        function openQuiz() {
-            window.open("https://forms.gle/5Hta7ESDDmF3c8MA7");
-        }</script>
-                    
-                    <button class="quiz-butto" onclick="openFeedback()">Feedback</button>
-        <script>
-        
-        function openFeedback() {
-            window.open("https://forms.gle/iD8DAoUHBcUfbnU17");
-        }
-    </script>
-    <div class="chatbox">
-       <img src="../static/images/robot.png" alt="Chatbot" style="width: 50px; height: 50px; position: absolute; top: -55px; right: 5px;"/>
-       <div id="chat-messages" style="overflow-y: auto; height: 150px; margin-top: 20px;"></div>
-       <input type="text" id="input-box" placeholder="Ask me anything..." style="width: 90%; position: absolute; bottom: 5px; left: 5%;">
+    <button class="quiz-butto" onclick="openFeedback()">Feedback</button>
+
+    <!-- Chatbot Icon and Text Box -->
+    <div class="chatbot-container">
+        <div id="chat-text-box">
+            <div id="chat-text">Hi, I'm the Support Assistant</div>
+        </div>
+        <div id="chat-icon" onclick="toggleChatbox()">
+            <img src="../static/images/bot.png" alt="Chatbot" style="width: 120px; height: 180px;"/>
+        </div>
+    </div>
+
+    <!-- Chatbox -->
+    <div class="chatbox" id="chatbox">
+        <div id="chat-window">
+            <div id="chat-header">
+                <span>DRKIST ChatBot</span>
+                <button id="close-chatbox" onclick="toggleChatbox()">X</button>
+            </div>
+            <div id="chat-messages"></div>
+            <div id="chat-options" style="display: none;">
+                <button onclick="selectOption('Courses Available')">Courses Available</button>
+                <button onclick="selectOption('College Timings')">College Timings</button>
+                <button onclick="selectOption('Address')">Address</button>
+                <button onclick="selectOption('Placements')">Placements</button>
+            </div>
+            <input type="text" id="input-box" placeholder="Ask me anything...">
+        </div>
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
-    
     <script>
-        const socket = io('http://localhost:5000'); // Use io() instead of io.connect() for socket.io v4+
-        
-        // Check if the socket connection is successful
+        const socket = io('http://localhost:5000');
+
         socket.on('connect', function() {
             console.log('Connected to server!');
         });
 
-        // Send user message to server when the 'Enter' key is pressed
+        // Text display logic
+        const chatTextBox = document.getElementById('chat-text');
+        setTimeout(() => {
+            chatTextBox.innerText = "How Can I, help you?";
+            setTimeout(() => {
+                document.getElementById('chat-text-box').style.display = 'none';
+            }, 3000); // Hide after 3 seconds
+        }, 2000); // Change text after 2 seconds
+
+        // Toggle chatbox visibility
+        function toggleChatbox() {
+            const chatbox = document.getElementById('chatbox');
+            if (chatbox.style.display === 'none') {
+                chatbox.style.display = 'block';
+                displayGreeting();
+                displayOptions();
+            } else {
+                chatbox.style.display = 'none';
+            }
+        }
+
+        // Display greeting based on time
+        function displayGreeting() {
+            const chatMessages = document.getElementById('chat-messages');
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting;
+
+            if (hour < 12) {
+                greeting = "Good Morning!";
+            } else if (hour < 18) {
+                greeting = "Good Afternoon!";
+            } else {
+                greeting = "Good Evening!";
+            }
+
+            chatMessages.innerHTML += `<div>DRK Assistant: ${greeting}</div>`;
+            chatMessages.innerHTML += `<div>DRK Assistant: How can I help you?</div>`;
+        }
+
+        // Display options
+        function displayOptions() {
+            const chatOptions = document.getElementById('chat-options');
+            chatOptions.style.display = 'block';
+        }
+
+        // Handle option selection
+        function selectOption(option) {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML += `<div>User: ${option}</div>`;
+            socket.emit('message', option);
+        }
+
+        // Handle user input
         document.getElementById('input-box').addEventListener('keypress', function(e) {
             if (e.key === 'Enter' && e.target.value.trim() !== '') {
                 const message = e.target.value;
-                e.target.value = ''; // clear input box
-                document.getElementById('chat-messages').innerHTML += `<div>User: ${message}</div>`;  // Display user message
-                socket.emit('message', message); // Emit message to server
+                e.target.value = '';
+                document.getElementById('chat-messages').innerHTML += `<div>User: ${message}</div>`;
+                socket.emit('message', message);
+                resetTimeout(); // Reset the inactivity timer
             }
         });
 
-        // Display bot response in the chatbox
+        // Display bot response
         socket.on('response', function(data) {
-            document.getElementById('chat-messages').innerHTML += `<div>Bot: ${data}</div>`;
+            document.getElementById('chat-messages').innerHTML += `<div>DRK Assistant: ${data}</div>`;
             const chatbox = document.getElementById('chat-messages');
-            chatbox.scrollTop = chatbox.scrollHeight; // Scroll to the bottom of the chatbox
+            chatbox.scrollTop = chatbox.scrollHeight;
         });
+
+        // Inactivity timer
+        let timeout;
+        function resetTimeout() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                document.getElementById('chat-messages').innerHTML += `<div>DRK Assistant: Is there Anything Else I can help with?</div>`;
+            }, 15000); // 15 seconds
+        }
+
+        document.getElementById('input-box').addEventListener('input', resetTimeout);
     </script>
 </body>
 </html>

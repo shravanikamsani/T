@@ -1,3 +1,24 @@
+/* Add this to your existing CSS */
+#chat-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#chat-options button {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: left;
+}
+
+#chat-options button:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
 /* General Styling */
 body {
     font-family: 'Poppins', sans-serif;
@@ -10,30 +31,68 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: url('images/c.png') no-repeat center center/cover;
+    background: url('images/c.jpg') no-repeat center center/cover;
 }
 
+/* Chatbot Container */
+.chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Chat Text Box */
+#chat-text-box {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    color: black;
+    font-size: 14px;
+}
+
+/* Chat Icon */
+#chat-icon {
+    cursor: pointer;
+    background: none; /* No background */
+}
+
+/* Chatbox */
 .chatbox {
     position: fixed;
-    top: 30px; /* Adjusted to top */
-    right: 10px;
-    width: 250px; /* Adjusted width for better readability */
-    height: 400px; /* Adjusted height */
-    background-color: rgba(0, 0, 0, 0.7);
+    bottom: 80px;
+    right: 90px; /* Adjusted to appear on the left of the icon */
+    width: 250px;
+    height: auto;
+    background-color: black;
     border-radius: 10px;
     z-index: 1000;
-    display: flex;
+    display: none; /* Hidden by default */
     flex-direction: column;
     padding: 10px;
     box-sizing: border-box;
 }
 
-.chatbot-image {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+#chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 10px;
-    align-self: center;
+}
+
+#close-chatbox {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#close-chatbox:hover {
+    color: red;
 }
 
 #chat-messages {
@@ -41,6 +100,7 @@ body {
     overflow-y: auto;
     color: white;
     margin-bottom: 10px;
+    height: 150px;
 }
 
 #input-box {
@@ -185,4 +245,6 @@ h5 {
         width: 40vw;
     }
     .chatbox {
-        width: 180px;}}
+        width: 180px;
+    }
+}
